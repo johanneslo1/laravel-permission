@@ -30,6 +30,23 @@ class Role extends Model implements RoleContract
 
         $this->setTable(config('permission.table_names.roles'));
     }
+    
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return array
+     */
+    public function routeNotificationForMail($notification)
+    {
+        $emails = collect([]);
+
+        foreach ($this->users() as $user) {
+          $emails->add($user->email);
+        }
+
+        return $emails->toArray();
+    }
 
     public static function create(array $attributes = [])
     {
