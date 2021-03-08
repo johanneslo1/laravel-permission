@@ -5,11 +5,11 @@ namespace Spatie\Permission\Test;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Middlewares\RoleMiddleware;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
+use Spatie\Permission\Middlewares\RoleMiddleware;
 use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
+use Spatie\Permission\Models\Permission;
 
 class WildcardMiddlewareTest extends TestCase
 {
@@ -34,9 +34,9 @@ class WildcardMiddlewareTest extends TestCase
     public function a_guest_cannot_access_a_route_protected_by_the_permission_middleware()
     {
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, 'articles.edit'
-            ), 403);
+            403,
+            $this->runMiddleware($this->permissionMiddleware, 'articles.edit')
+        );
     }
 
     /** @test */
@@ -49,9 +49,9 @@ class WildcardMiddlewareTest extends TestCase
         $this->testUser->givePermissionTo('articles');
 
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, 'articles.edit'
-            ), 200);
+            200,
+            $this->runMiddleware($this->permissionMiddleware, 'articles.edit')
+        );
     }
 
     /** @test */
@@ -64,14 +64,14 @@ class WildcardMiddlewareTest extends TestCase
         $this->testUser->givePermissionTo('articles.*.test');
 
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, 'news.edit|articles.create.test'
-            ), 200);
+            200,
+            $this->runMiddleware($this->permissionMiddleware, 'news.edit|articles.create.test')
+        );
 
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, ['news.edit', 'articles.create.test']
-            ), 200);
+            200,
+            $this->runMiddleware($this->permissionMiddleware, ['news.edit', 'articles.create.test'])
+        );
     }
 
     /** @test */
@@ -84,9 +84,9 @@ class WildcardMiddlewareTest extends TestCase
         $this->testUser->givePermissionTo('articles.*');
 
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, 'news.edit'
-            ), 403);
+            403,
+            $this->runMiddleware($this->permissionMiddleware, 'news.edit')
+        );
     }
 
     /** @test */
@@ -95,9 +95,9 @@ class WildcardMiddlewareTest extends TestCase
         Auth::login($this->testUser);
 
         $this->assertEquals(
-            $this->runMiddleware(
-                $this->permissionMiddleware, 'articles.edit|news.edit'
-            ), 403);
+            403,
+            $this->runMiddleware($this->permissionMiddleware, 'articles.edit|news.edit')
+        );
     }
 
     /** @test */
@@ -111,28 +111,28 @@ class WildcardMiddlewareTest extends TestCase
         $this->testUser->givePermissionTo('articles.*');
 
         $this->assertEquals(
-            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|news.edit|articles.create'),
-            200
+            200,
+            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|news.edit|articles.create')
         );
 
         $this->testUser->removeRole('testRole');
 
         $this->assertEquals(
-            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|articles.edit'),
-            200
+            200,
+            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|articles.edit')
         );
 
         $this->testUser->revokePermissionTo('articles.*');
         $this->testUser->assignRole('testRole');
 
         $this->assertEquals(
-            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|articles.edit'),
-            200
+            200,
+            $this->runMiddleware($this->roleOrPermissionMiddleware, 'testRole|articles.edit')
         );
 
         $this->assertEquals(
-            $this->runMiddleware($this->roleOrPermissionMiddleware, ['testRole', 'articles.edit']),
-            200
+            200,
+            $this->runMiddleware($this->roleOrPermissionMiddleware, ['testRole', 'articles.edit'])
         );
     }
 

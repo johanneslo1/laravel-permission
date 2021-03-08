@@ -3,11 +3,11 @@
 namespace Spatie\Permission\Test;
 
 use Illuminate\Auth\Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Spatie\Permission\Traits\HasRoles;
 
 class Manager extends Model implements AuthorizableContract, AuthenticatableContract
 {
@@ -23,7 +23,7 @@ class Manager extends Model implements AuthorizableContract, AuthenticatableCont
     // When present, it takes precedence over the $guard_name property.
     public function guardName()
     {
-        return 'api';
+        return 'jwt';
     }
 
     // intentionally different property value for the sake of unit tests

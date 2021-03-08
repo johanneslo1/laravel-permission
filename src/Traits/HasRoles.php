@@ -2,11 +2,11 @@
 
 namespace Spatie\Permission\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Contracts\Role;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRoles
 {
@@ -37,7 +37,7 @@ trait HasRoles
     /**
      * A model may have multiple roles.
      */
-    public function roles(): MorphToMany
+    public function roles(): BelongsToMany
     {
         return $this->morphToMany(
             config('permission.models.role'),
@@ -120,14 +120,10 @@ trait HasRoles
 
             $class::saved(
                 function ($object) use ($roles, $model) {
-                    static $modelLastFiredOn;
-                    if ($modelLastFiredOn !== null && $modelLastFiredOn === $model) {
-                        return;
-                    }
-                    $object->roles()->sync($roles, false);
-                    $object->load('roles');
-                    $modelLastFiredOn = $object;
-                });
+                    $model->roles()->sync($roles, false);
+                    $model->load('roles');
+                }
+            );
         }
 
         $this->forgetCachedPermissions();
@@ -251,7 +247,8 @@ trait HasRoles
         return $roles->intersect(
             $guard
                 ? $this->roles->where('guard_name', $guard)->pluck('name')
-                : $this->getRoleNames()) == $roles;
+                : $this->getRoleNames()
+        ) == $roles;
     }
 
     /**
