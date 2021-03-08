@@ -4,6 +4,7 @@ namespace Spatie\Permission\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Spatie\Permission\Exceptions\GuardDoesNotMatch;
 use Spatie\Permission\Exceptions\RoleAlreadyExists;
@@ -11,7 +12,6 @@ use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Guard;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
-use Illuminate\Notifications\Notifiable;
 
 class Role extends Model implements RoleContract
 {
@@ -44,7 +44,7 @@ class Role extends Model implements RoleContract
         $emails = collect([]);
 
         foreach ($this->users() as $user) {
-          $emails->add($user->email);
+            $emails->add($user->email);
         }
 
         return $emails->toArray();
